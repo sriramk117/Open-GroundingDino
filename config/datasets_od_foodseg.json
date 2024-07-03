@@ -1,0 +1,18 @@
+{
+  "train": [
+    {
+      "root": "path/FoodSeg103/Images/img_dir/train",
+      "anno": "datasets/foodseg103_train.jsonl",
+      "label_map": "datasets/foodseg103_label_map.json",
+      "dataset_mode": "odvg"
+    }
+  ],
+  "val": [
+    {
+      "root": "path/FoodSeg103/Images/img_dir/test",
+      "anno": "Downloads/foodseg103_val.json",
+      "label_map": null,
+      "dataset_mode": "coco"
+    }
+  ]
+}
