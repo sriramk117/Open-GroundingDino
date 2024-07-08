@@ -1,7 +1,7 @@
 {
   "train": [
     {
-      "root": "/content/train",
+      "root": "/content/FoodSeg103/train",
       "anno": "/content/foodseg103_train.jsonl",
       "label_map": "/content/foodseg103_label_map.json",
       "dataset_mode": "odvg"
@@ -9,7 +9,7 @@
   ],
   "val": [
     {
-      "root": "/content/test",
+      "root": "/content/FoodSeg103/test",
       "anno": "/content/foodseg103_val.json",
       "label_map": null,
       "dataset_mode": "coco"
