@@ -72,11 +72,11 @@ class CocoGroundingEvaluator(object):
         for coco_eval in self.coco_eval.values():
             coco_eval.accumulate()
 
-    def summarize(self):
+    def summarize(self, cat_list):
         for iou_type, coco_eval in self.coco_eval.items():
             print("IoU metric: {}".format(iou_type))
             coco_eval.summarize()
-            for catId in list(np.unique(self.catIds)):
+            for catId in cat_list:
                 coco_eval2 = coco_eval
                 coco_eval2.params.catIds = [catId]
                 coco_eval2.evaluate()
