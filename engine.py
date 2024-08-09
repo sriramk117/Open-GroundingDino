@@ -258,7 +258,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
     # accumulate predictions from all images
     if coco_evaluator is not None:
         coco_evaluator.accumulate()
-        coco_evaluator.summarize()
+        coco_evaluator.summarize(cat_list)
         
     panoptic_res = None
     if panoptic_evaluator is not None:
