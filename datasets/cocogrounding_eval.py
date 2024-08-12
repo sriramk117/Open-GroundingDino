@@ -77,11 +77,10 @@ class CocoGroundingEvaluator(object):
             print("IoU metric: {}".format(iou_type))
             coco_eval.summarize()
             for catId in cat_list:
-                coco_eval2 = COCOeval(self.coco_gt, iouType=iou_type)
-                coco_eval2.params.catIds = [catId]
-                coco_eval2.evaluate()
-                coco_eval2.accumulate()
-                coco_eval2.summarize()
+                coco_eval.params.catIds = [catId]
+                coco_eval.evaluate()
+                coco_eval.accumulate()
+                coco_eval.summarize()
 
     def prepare(self, predictions, iou_type):
         if iou_type == "bbox":
