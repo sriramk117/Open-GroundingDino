@@ -76,7 +76,7 @@ class CocoGroundingEvaluator(object):
         for iou_type, coco_eval in self.coco_eval.items():
             print("IoU metric: {}".format(iou_type))
             coco_eval.summarize()
-            for catId in range(0, 103):
+            for catId in range(0, 104):
                 print("Category ID: {}".format(catId))
                 coco_eval2 = coco_eval
                 coco_eval2.params.catIds = [catId]
