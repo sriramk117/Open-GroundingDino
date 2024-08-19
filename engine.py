@@ -181,7 +181,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
 
         if coco_evaluator is not None:
             coco_evaluator.update(res)
-            coco_evaluator.summarize_each_class()
+            #coco_evaluator.summarize_each_class()
 
         if panoptic_evaluator is not None:
             res_pano = postprocessors["panoptic"](outputs, target_sizes, orig_target_sizes)
@@ -259,7 +259,9 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
     # accumulate predictions from all images
     if coco_evaluator is not None:
         coco_evaluator.accumulate()
+        coco_evaluator.summarize_each_class()
         coco_evaluator.summarize(cat_list)
+
         
     panoptic_res = None
     if panoptic_evaluator is not None:
