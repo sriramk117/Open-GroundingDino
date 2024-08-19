@@ -34,9 +34,14 @@ class CocoGroundingEvaluator(object):
 
         self.iou_types = iou_types
         self.coco_eval = {}
+        self.coco_eval_classwise = []
+        self.eval_imgs_classwise = {k: [] for k in range(0, 105)}
         for iou_type in iou_types:
             self.coco_eval[iou_type] = COCOeval(coco_gt, iouType=iou_type)
             self.coco_eval[iou_type].useCats = useCats
+            for catId in range(0, 105): # newline
+              self.coco_eval_classwise.append(COCOeval(coco_gt, iouType=iou_type)) # newline
+              self.coco_eval_classwise[catId].params.catIds = [catId]
 
         self.img_ids = []
         self.eval_imgs = {k: [] for k in iou_types}
@@ -61,34 +66,43 @@ class CocoGroundingEvaluator(object):
             coco_eval.params.useCats = self.useCats
             img_ids, eval_imgs = evaluate(coco_eval)
 
+            for catId in range(0, 105): # newlines
+              coco_eval_classwise = self.coco_eval_classwise[catId]
+              coco_eval_classwise.cocoDt = coco_dt
+              coco_eval_classwise.params.imgIds = list(img_ids)
+              coco_eval_classwise.params.useCats = self.useCats
+              img_ids_class, eval_imgs_class = evaluate(coco_eval_classwise)
+              self.eval_imgs_classwise[catId].append(eval_imgs_class)
+
+
             self.eval_imgs[iou_type].append(eval_imgs)
 
     def synchronize_between_processes(self):
         for iou_type in self.iou_types:
             self.eval_imgs[iou_type] = np.concatenate(self.eval_imgs[iou_type], 2)
             create_common_coco_eval(self.coco_eval[iou_type], self.img_ids, self.eval_imgs[iou_type])
+            for catId in range(0, 105): # newlines
+              self.eval_imgs_classwise[catId] = np.concatenate(self.eval_imgs_classwise[catId], 2)
+              create_common_coco_eval(self.coco_eval_classwise[catId], self.img_ids, self.eval_imgs_classwise[catId])
+              
 
     def accumulate(self):
         for coco_eval in self.coco_eval.values():
             coco_eval.accumulate()
+            for catId in range(0, 105):
+                self.coco_eval_classwise[catId].accumulate()
 
     def summarize(self, cat_list):
         for iou_type, coco_eval in self.coco_eval.items():
             print("IoU metric: {}".format(iou_type))
             coco_eval.summarize()
+            
 
     def summarize_each_class(self):
         for iou_type, coco_eval in self.coco_eval.items():
-            #print("IoU metric: {}".format(iou_type))
-            #coco_eval.summarize()
             for catId in range(0, 105):
-                coco_eval2 = copy.deepcopy(coco_eval)
-                coco_eval2.params.catIds = [catId]
-                if (len(coco_eval2.params.imgIds) > 0):
-                  print("Category ID: {}".format(catId))
-                  coco_eval2.evaluate()
-                  coco_eval2.accumulate()
-                  coco_eval2.summarize()
+                print("CATEGORY ID: {}".format(catId))
+                self.coco_eval_classwise[catId].summarize()
 
     def prepare(self, predictions, iou_type):
         if iou_type == "bbox":
